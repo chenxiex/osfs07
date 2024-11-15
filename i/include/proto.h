@@ -49,7 +49,7 @@ PUBLIC void milli_delay(int milli_sec);
 
 /* keyboard.c */
 PUBLIC void init_keyboard();
-PUBLIC void keyboard_read();
+PUBLIC void keyboard_read(TTY* p_tty);
 
 /* tty.c */
 PUBLIC void task_tty();
