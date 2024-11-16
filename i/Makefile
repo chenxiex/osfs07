@@ -16,9 +16,9 @@ DASM		= ndisasm
 CC		= gcc
 LD		= ld
 ASMBFLAGS	= -I boot/include/
-ASMKFLAGS	= -I include/ -f elf -g
-CFLAGS		= -I include/ -c -fno-builtin -fno-stack-protector -m32 -g -fPIC
-LDFLAGS		= -m elf_i386 -g -Ttext $(ENTRYPOINT)
+ASMKFLAGS	= -I include/ -f elf
+CFLAGS		= -I include/ -c -fno-builtin
+LDFLAGS		= -s -Ttext $(ENTRYPOINT)
 DASMFLAGS	= -u -o $(ENTRYPOINT) -e $(ENTRYOFFSET)
 
 # This Program
@@ -39,12 +39,6 @@ nop :
 
 everything : $(ORANGESBOOT) $(ORANGESKERNEL)
 
-run: buildimg
-	qemu-system-i386 -drive format=raw,if=floppy,file=a.img
-
-debug: buildimg
-	qemu-system-i386 -drive format=raw,if=floppy,file=a.img -s -S
-
 all : realclean everything
 
 image : realclean everything clean buildimg
@@ -53,16 +47,18 @@ clean :
 	rm -f $(OBJS)
 
 realclean :
-	rm -f $(OBJS) $(ORANGESBOOT) $(ORANGESKERNEL) a.img
+	rm -f $(OBJS) $(ORANGESBOOT) $(ORANGESKERNEL)
 
 disasm :
 	$(DASM) $(DASMFLAGS) $(ORANGESKERNEL) > $(DASMOUTPUT)
 
-a.img : a.img.gz
-	gzip -cd a.img.gz > a.img
-
-buildimg : a.img $(ORANGESBOOT) $(ORANGESKERNEL)
-	scripts/buildimg.sh
+# We assume that "a.img" exists in current folder
+buildimg :
+	dd if=boot/boot.bin of=a.img bs=512 count=1 conv=notrunc
+	sudo mount -o loop a.img /mnt/floppy/
+	sudo cp -fv boot/loader.bin /mnt/floppy/
+	sudo cp -fv kernel.bin /mnt/floppy
+	sudo umount /mnt/floppy
 
 boot/boot.bin : boot/boot.asm boot/include/load.inc boot/include/fat12hdr.inc
 	$(ASM) $(ASMBFLAGS) -o $@ $<
