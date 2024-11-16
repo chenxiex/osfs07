@@ -59,6 +59,6 @@ See ``o/`` for details.
 
 `‹prev`_   `next›`_
 
-.. _`Step 06`: https://github.com/yyu/osfs06
-.. _`‹prev`: https://github.com/yyu/osfs06
-.. _`next›`: https://github.com/yyu/osfs08
+.. _`Step 06`: https://github.com/chenxiex/osfs06
+.. _`‹prev`: https://github.com/chenxiex/osfs06
+.. _`next›`: https://github.com/chenxiex/osfs08
