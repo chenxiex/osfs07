@@ -22,6 +22,7 @@
 PRIVATE void init_tty(TTY* p_tty);
 PRIVATE void tty_do_read(TTY* p_tty);
 PRIVATE void tty_do_write(TTY* p_tty);
+PRIVATE void tty_do_easteregg(TTY* p_tty);
 PRIVATE void put_key(TTY* p_tty, u32 key);
 
 /*======================================================================*
@@ -40,6 +41,7 @@ PUBLIC void task_tty()
 	while (1) {
 		for (p_tty=TTY_FIRST;p_tty<TTY_END;p_tty++) {
 			tty_do_read(p_tty);
+			tty_do_easteregg(p_tty);
 			tty_do_write(p_tty);
 		}
 	}
@@ -97,8 +99,8 @@ PUBLIC void in_process(TTY* p_tty, u32 key)
 		case F10:
 		case F11:
 		case F12:
-			/* Alt + F1~F12 */
-			if ((key & FLAG_ALT_L) || (key & FLAG_ALT_R)) {
+			/* Shift + F1~F12 */
+			if ((key & FLAG_SHIFT_L) || (key & FLAG_SHIFT_R)) {
 				select_console(raw_code - F1);
 			}
 			break;
@@ -152,4 +154,21 @@ PRIVATE void tty_do_write(TTY* p_tty)
 	}
 }
 
+PRIVATE void tty_do_easteregg(TTY* p_tty)
+{
+	if (p_tty-tty_table != 3) return;
 
+	if (p_tty->inbuf_count) {
+		char ch = *(p_tty->p_inbuf_tail);
+		if (ch == 'c')
+		{
+			p_tty->p_inbuf_tail++;
+			if (p_tty->p_inbuf_tail == p_tty->in_buf + TTY_IN_BYTES) {
+				p_tty->p_inbuf_tail = p_tty->in_buf;
+			}
+			p_tty->inbuf_count--;
+
+			out_char(p_tty->p_console, 'E');
+		}
+	}
+}
