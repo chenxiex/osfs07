@@ -48,15 +48,13 @@ new file mode 100644
 index 0000000..afbd8fc
 --- /dev/null
 +++ b/.vscode/settings.json
-@@ -0,0 +1,13 @@
+@@ -0,0 +1,11 @@
 +{
 +    "nasm.extraFlags": [
 +        "-I include/"
 +    ],
 +    "clangd.fallbackFlags": [
 +        "-I${workspaceFolder}/include",
-+        "-I${workspaceFolder}",
-+        "-I${fileDirname}/include",
 +        "-Wno-error=implicit-function-declaration"
 +    ],
 +    "nasm.outputFormat": "elf32",
